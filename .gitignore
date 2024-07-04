@@ -1,0 +1,5 @@
+.direnv/
+.devenv/
+public/
+**/.DS_Store
+/generated/

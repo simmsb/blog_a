@@ -1,0 +1,320 @@
+@import 'tailwindcss';
+
+@theme {
+    --color-bg: oklch(94.91% 0.000 89.2);
+    --color-surface: oklch(84.68% 0.002 197.1);
+    --color-text: oklch(39.50% 0.014 252.3);
+    --color-muted: oklch(51.38% 0.005 197.0);
+    --color-accent: oklch(64.64% 0.134 12.1);
+    --color-link: oklch(62.59% 0.077 233.2);
+
+    --font-mono: "Latin Modern Mono", Consolas, Menlo, Monaco, "Andale Mono", "Ubuntu Mono", monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color-bg: oklch(26.31% 0.009 255.6);
+        --color-surface: oklch(40.26% 0.004 197.0);
+        --color-text: oklch(87.61% 0.000 89.2);
+        --color-muted: oklch(87.12% 0.034 95.9);
+        --color-accent: oklch(73.15% 0.065 184.4);
+        --color-link: oklch(79.52% 0.064 33.3);
+    }
+}
+
+:root[data-theme="light"] {
+    --color-bg: oklch(94.91% 0.000 89.2);
+    --color-surface: oklch(84.68% 0.002 197.1);
+    --color-text: oklch(39.50% 0.014 252.3);
+    --color-muted: oklch(51.38% 0.005 197.0);
+    --color-accent: oklch(64.64% 0.134 12.1);
+    --color-link: oklch(62.59% 0.077 233.2);
+}
+
+:root[data-theme="dark"] {
+    --color-bg: oklch(26.31% 0.009 255.6);
+    --color-surface: oklch(40.26% 0.004 197.0);
+    --color-text: OKLCH(87.61% 0.000 89.2);
+    --color-muted: OKLCH(87.12% 0.034 95.9);
+    --color-accent: OKLCH(73.15% 0.065 184.4);
+    --color-link: OKLCH(79.52% 0.064 33.3);
+}
+
+@layer base {
+    @media (prefers-color-scheme: dark) {
+        .invert-svg-dark svg {
+            filter: invert(100%) hue-rotate(180deg);
+        }
+    }
+
+    :root[data-theme="light"] {
+        .invert-svg-dark svg {
+            filter: none;
+        }
+    }
+
+    :root[data-theme="dark"] {
+        .invert-svg-dark svg {
+            filter: invert(100%) hue-rotate(180deg);
+        }
+    }
+
+    html {
+        color-scheme: light dark;
+        font-family: var(--font-mono);
+        background-color: var(--color-bg);
+    }
+
+    body {
+        @apply min-h-[100svh] bg-bg text-text antialiased;
+        font-size: 1.1rem;
+        line-height: 1.5;
+    }
+
+    #col-wrapper {
+        display: grid;
+        grid-template-columns: 1fr min(60rem, 90%) 1fr;
+        grid-template-rows: auto 1fr auto;
+    }
+
+    @media (min-width: 90rem) {
+        article > img,
+        article > p > img,
+        article > figure,
+        article > .picture-like {
+            margin-inline: calc(var(--spacing) * -8);
+            max-width: calc(100% + var(--spacing) * 16);
+        }
+
+        #col-wrapper {
+            @apply mx-2;
+            grid-template-columns: 1fr min(50rem, 90%) 2fr;
+            column-gap: calc(var(--spacing) * 16);
+        }
+
+        .sidenote-note {
+            position: absolute;
+            anchor-name: --sidenote;
+            top: max(anchor(var(--for) top), anchor(--sidenote bottom) + 1em);
+            left: anchor(--notes left);
+            width: anchor-size(--notes width);
+        }
+    }
+
+    @media (min-width: 120rem) {
+        #col-wrapper {
+            grid-template-columns: 1fr min(50rem, 90%) 1fr 1fr;
+        }
+    }
+
+    .sidenote-ref {
+        anchor-name: var(--is);
+    }
+
+    #sidenote-anchor-top {
+        /* Without an empty element set as a sidenote anchor at the top of the page, the
+           anchor(--sidenote bottom) seems to resolve badly
+        */
+        anchor-name: --sidenote;
+    }
+
+    #notes {
+        anchor-name: --notes;
+    }
+
+    .fix-svg > svg {
+        width: 100% !important;
+        height: auto !important;
+    }
+
+    .medium-zoom-overlay,
+    .medium-zoom-image--opened {
+        z-index: 999;
+    }
+
+    body > footer {
+        @apply text-muted text-sm;
+    }
+
+    ::selection {
+        @apply bg-accent text-bg;
+    }
+
+    :target {
+        scroll-margin-block: 5ex;
+    }
+
+    /* Headings: sizing + the "# " accent prefix, ported from suCSS */
+    h1, h2, h3, h4, h5, h6 {
+        @apply font-bold leading-tight text-balance break-words relative;
+    }
+
+    h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
+        @apply text-accent;
+        content: "# ";
+    }
+
+    h3 { @apply text-xl; }
+    h4 { @apply text-lg; }
+    h5 { @apply text-base; }
+    h6 { @apply text-xs; }
+
+    @media (max-width: 720px) {
+        h3 { @apply text-base; }
+        h4 { @apply text-sm; }
+        h5 { @apply text-xs; }
+        h6 { @apply text-xs; }
+    }
+
+    p {
+        @apply break-words;
+    }
+
+    a {
+        @apply text-link no-underline rounded-sm transition-colors hover:bg-link hover:text-bg in-[.active-hover]:text-bg in-[.active-hover]:bg-link;
+    }
+
+    code {
+        @apply bg-surface px-1.5 py-0.5 rounded-sm text-sm;
+    }
+
+    pre {
+        @apply bg-surface p-2.5 rounded-lg overflow-auto max-h-[30rem] whitespace-pre text-base border border-accent;
+    }
+
+    pre code {
+        @apply bg-transparent p-0;
+    }
+
+    hr {
+        @apply border-accent my-2;
+    }
+
+    mark {
+        @apply px-1 rounded-sm bg-accent text-bg;
+    }
+
+    mark a {
+        @apply text-link;
+    }
+
+    img, video {
+        @apply max-w-full h-auto p-0.5 rounded-2xl border-2 border-accent;
+    }
+
+    figure {
+        @apply block overflow-x-auto;
+    }
+
+    figcaption {
+        @apply text-left text-sm text-muted mb-4 ml-4;
+    }
+
+    sup, sub {
+        @apply align-baseline relative;
+    }
+
+    sup { top: -0.4em; }
+    sub { top: 0.3em; }
+
+    /* Table styles */
+    table {
+        @apply border-collapse my-6 block overflow-x-auto whitespace-nowrap;
+    }
+
+    th,
+    td {
+        @apply border border-muted text-left p-2;
+    }
+
+    th {
+        @apply bg-surface font-bold;
+    }
+
+    tr:nth-child(even) {
+        @apply bg-surface;
+    }
+
+    caption {
+        @apply text-left font-bold mb-1.5 ml-4;
+    }
+
+    #nav-bar {
+        @apply flex flex-row flex-wrap items-center content-end justify-end gap-1 pt-2.5;
+    }
+
+    #footer-container {
+        @apply flex flex-wrap items-center justify-between;
+    }
+
+    .icons {
+        @apply inline-block align-middle cursor-pointer text-text;
+        width: 1.3rem;
+        height: 1.3rem;
+        aspect-ratio: 1 / 1;
+        fill: currentColor;
+        background-color: transparent;
+    }
+
+    .icons:hover {
+        @apply text-accent;
+        background-color: transparent;
+    }
+
+    .no-style {
+        @apply p-0 m-0 border-none rounded-none;
+    }
+
+    .no-style:hover {
+        @apply text-accent;
+        background-color: transparent;
+    }
+
+    .center {
+        @apply text-center;
+    }
+
+    .center img {
+        @apply block mx-auto my-4;
+    }
+
+    .footnote-definition {
+        @apply ml-0.5;
+    }
+
+    .footnote-definition-label {
+        @apply text-accent;
+    }
+
+    .footnote-definition p {
+        @apply inline mt-2.5 ml-2.5;
+    }
+
+    .theme-transition {
+        @apply transition-colors duration-300;
+        transition-timing-function: ease;
+    }
+
+    .code-block-wrapper .theme-dark {
+        display: none;
+    }
+    .code-block-wrapper .theme-light {
+        display: block;
+    }
+
+    @media (prefers-color-scheme: dark) {
+        .code-block-wrapper .theme-light {
+            display: none;
+        }
+        .code-block-wrapper .theme-dark {
+            display: block;
+        }
+    }
+
+    :root[data-theme="dark"] .code-block-wrapper .theme-light {
+        display: none;
+    }
+    :root[data-theme="dark"] .code-block-wrapper .theme-dark {
+        display: block;
+    }
+}
